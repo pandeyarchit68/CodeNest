@@ -1,14 +1,3 @@
-// ============================================================================
-//  UIControls.h  -  Custom UI components
-//
-//  OWNER: Vanshika
-//
-//    FlatButton   - rounded button with hover / pressed states
-//    TabBar       - custom drawn document tabs  [ name x ] [ name * ] [ + ]
-//    Gutter       - line numbers next to an editor
-//    AccentStrip  - thin line / rainbow stripe under the header
-//    ActivityBar  - narrow left strip with the Explorer icon (show / hide panel)
-// ============================================================================
 #ifndef CODENEST_UICONTROLS_H
 #define CODENEST_UICONTROLS_H
 
@@ -22,16 +11,13 @@
 #include <wx/string.h>
 #include <wx/textctrl.h>
 
-// ----------------------------------------------------------------------------
-//  FlatButton : modern rounded button with hover / pressed states
-// ----------------------------------------------------------------------------
 class FlatButton : public wxControl {
 public:
     enum Kind { Ghost, Primary };
 
     FlatButton(wxWindow* parent, wxWindowID id, const wxString& label, Kind kind = Ghost, bool playIcon = false);
 
-    bool AcceptsFocus() const override { return false; }   // keep the caret in the editor
+    bool AcceptsFocus() const override { return false; }   
 
 protected:
     wxSize DoGetBestSize() const override;
@@ -48,9 +34,6 @@ private:
     void OnPaint(wxPaintEvent& e);
 };
 
-// ----------------------------------------------------------------------------
-//  TabBar : custom drawn document tabs  [ name x ] [ name * ] [ + ]
-// ----------------------------------------------------------------------------
 class TabBar : public wxPanel {
 public:
     struct Tab { wxString label; bool modified = false; };
@@ -85,9 +68,6 @@ private:
     void OnPaint(wxPaintEvent& e);
 };
 
-// ----------------------------------------------------------------------------
-//  Gutter : line numbers next to an editor
-// ----------------------------------------------------------------------------
 class Gutter : public wxPanel {
 public:
     Gutter(wxWindow* parent, wxTextCtrl* editor);
@@ -103,9 +83,6 @@ private:
     void OnPaint(wxPaintEvent& e);
 };
 
-// ----------------------------------------------------------------------------
-//  AccentStrip : thin line under the header; a rainbow stripe in the Sunshine Rainbow theme
-// ----------------------------------------------------------------------------
 class AccentStrip : public wxPanel {
 public:
     explicit AccentStrip(wxWindow* parent);
@@ -114,10 +91,6 @@ private:
     void OnPaint(wxPaintEvent& e);
 };
 
-// ----------------------------------------------------------------------------
-//  ActivityBar : narrow strip on the far left (like VS Code). Clicking the
-//  Explorer icon calls onToggle, which shows / hides the file explorer panel.
-// ----------------------------------------------------------------------------
 class ActivityBar : public wxPanel {
 public:
     std::function<void()> onToggle;
@@ -140,4 +113,4 @@ private:
     void OnLeave(wxMouseEvent& e);
 };
 
-#endif // CODENEST_UICONTROLS_H
+#endif 
