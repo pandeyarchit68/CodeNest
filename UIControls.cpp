@@ -1,8 +1,3 @@
-// ============================================================================
-//  UIControls.cpp  -  FlatButton, TabBar, Gutter, AccentStrip, ActivityBar
-//
-//  OWNER: Vanshika
-// ============================================================================
 #include "UIControls.h"
 #include "Theme.h"
 
@@ -13,9 +8,6 @@
 #include <algorithm>
 #include <string>
 
-// ============================================================================
-//  FlatButton
-// ============================================================================
 FlatButton::FlatButton(wxWindow* parent, wxWindowID id, const wxString& label, Kind kind, bool playIcon)
     : wxControl(parent, id, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE),
     m_label(label), m_kind(kind), m_play(playIcon) {
@@ -99,9 +91,6 @@ void FlatButton::OnPaint(wxPaintEvent&) {
     dc.DrawText(m_label, x, y);
 }
 
-// ============================================================================
-//  TabBar
-// ============================================================================
 TabBar::TabBar(wxWindow* parent)
     : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE) {
     SetBackgroundStyle(wxBG_STYLE_PAINT);
@@ -157,7 +146,6 @@ wxRect TabBar::CloseRect(const wxRect& tab) const {
     return wxRect(tab.x + tab.width - FromDIP(8) - s, tab.y + (tab.height - s) / 2 + FromDIP(1), s, s);
 }
 
-// returns tab index (or -1), sets onClose when the pointer is over the x button, plus when over "+"
 int TabBar::HitTest(const wxPoint& p, bool& onClose, bool& onPlus) const {
     onClose = false;
     onPlus = false;
@@ -228,7 +216,6 @@ void TabBar::OnPaint(wxPaintEvent&) {
 
         wxRect cr = CloseRect(r);
 
-        // label (clipped so it never runs into the close button)
         dc.SetClippingRegion(wxRect(r.x, r.y, r.width - cr.width - FromDIP(10), r.height));
         dc.SetTextForeground(sel ? Theme::Text() : Theme::TextDim());
         int tw = 0, th = 0;
@@ -236,7 +223,6 @@ void TabBar::OnPaint(wxPaintEvent&) {
         dc.DrawText(t.label, r.x + padX, r.y + (r.height - th) / 2 + FromDIP(1));
         dc.DestroyClippingRegion();
 
-        // dirty dot / close button
         if (t.modified && !hov) {
             dc.SetBrush(wxBrush(sel ? Theme::Text() : Theme::TextDim()));
             dc.DrawCircle(cr.x + cr.width / 2, cr.y + cr.height / 2, FromDIP(4));
@@ -253,7 +239,6 @@ void TabBar::OnPaint(wxPaintEvent&) {
         }
     }
 
-    // "+" button
     {
         const wxRect& r = g.plus;
         if (m_hoverPlus) {
@@ -266,16 +251,12 @@ void TabBar::OnPaint(wxPaintEvent&) {
         dc.DrawLine(cx - a, cy, cx + a + 1, cy);
         dc.DrawLine(cx, cy - a, cx, cy + a + 1);
     }
-
-    // bottom border
+    
     dc.SetPen(wxPen(Theme::Border()));
     const wxSize cs = GetClientSize();
     dc.DrawLine(0, cs.y - 1, cs.x, cs.y - 1);
 }
 
-// ============================================================================
-//  Gutter
-// ============================================================================
 Gutter::Gutter(wxWindow* parent, wxTextCtrl* editor)
     : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE), m_ed(editor) {
     SetBackgroundStyle(wxBG_STYLE_PAINT);
@@ -325,9 +306,6 @@ void Gutter::OnPaint(wxPaintEvent&) {
     dc.DrawLine(cs.x - 1, 0, cs.x - 1, cs.y);
 }
 
-// ============================================================================
-//  AccentStrip
-// ============================================================================
 AccentStrip::AccentStrip(wxWindow* parent)
     : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE) {
     SetBackgroundStyle(wxBG_STYLE_PAINT);
@@ -359,9 +337,6 @@ void AccentStrip::OnPaint(wxPaintEvent&) {
     }
 }
 
-// ============================================================================
-//  ActivityBar  (Explorer icon: click = show / hide the explorer panel)
-// ============================================================================
 ActivityBar::ActivityBar(wxWindow* parent)
     : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE) {
     SetBackgroundStyle(wxBG_STYLE_PAINT);
@@ -400,14 +375,12 @@ void ActivityBar::OnPaint(wxPaintEvent&) {
     const wxSize cs = GetClientSize();
     const wxRect br = ButtonRect();
 
-    // active marker on the left edge
     if (m_active) {
         dc.SetPen(*wxTRANSPARENT_PEN);
         dc.SetBrush(wxBrush(Theme::Accent()));
         dc.DrawRectangle(0, br.y, FromDIP(2), br.height);
     }
 
-    // "Explorer" icon: two overlapping pages
     const wxColour col = (m_active || m_hover) ? Theme::Text() : Theme::TextDim();
     dc.SetPen(wxPen(col, std::max(1, FromDIP(1))));
     dc.SetBrush(*wxTRANSPARENT_BRUSH);
@@ -417,7 +390,6 @@ void ActivityBar::OnPaint(wxPaintEvent&) {
     const int iy = br.y + (br.height - size) / 2;
     auto d = [&](int v) { return FromDIP(v); };
 
-    // page in the back (top right), with a folded corner
     wxPoint back[6] = {
         wxPoint(ix + d(8),  iy + d(6)),  wxPoint(ix + d(8),  iy + d(0)),
         wxPoint(ix + d(17), iy + d(0)),  wxPoint(ix + d(22), iy + d(5)),
@@ -429,10 +401,8 @@ void ActivityBar::OnPaint(wxPaintEvent&) {
     };
     dc.DrawLines(3, fold);
 
-    // page in the front (bottom left)
     dc.DrawRectangle(ix + d(2), iy + d(6), d(12), d(16));
 
-    // right border
     dc.SetPen(wxPen(Theme::Border()));
     dc.DrawLine(cs.x - 1, 0, cs.x - 1, cs.y);
 }
