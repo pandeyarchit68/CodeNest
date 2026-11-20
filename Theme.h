@@ -1,11 +1,8 @@
 // ============================================================================
-//  Theme.h  -  Colour palettes and theme switching (header only)
+//  Theme.h  -  Colour palettes and theme switching
 //
 //  OWNER: Anushka
 //
-//  Every colour of the interface comes from the current Palette.
-//  Themes: Dark, Light, Sunshine Rainbow, Ocean, Forest, Dracula,
-//          Solarized Light, High Contrast.
 // ============================================================================
 #ifndef CODENEST_THEME_H
 #define CODENEST_THEME_H
@@ -21,11 +18,11 @@
 
 struct Palette {
     const char* name = "";
-    bool dark = true;          // dark title bar / dark scrollbars on Windows
-    bool rainbow = false;      // draws the rainbow stripe under the header
+    bool dark = true;          
+    bool rainbow = false;      
     wxColour bg, chrome, border, text, textDim, accent, onAccent;
-    wxColour logo;             // colour of the "CodeNest" logo text
-    wxColour sidebar;          // background of the file explorer panel
+    wxColour logo;             
+    wxColour sidebar;          
     wxColour tabIdle, tabHover, btnHover, btnDown, gutterBg, gutterLine;
     wxColour keyword, control, type, str, comment, number, function;
 };
@@ -46,8 +43,8 @@ namespace Theme {
         p.name = name; p.dark = dark;
         p.bg = bg; p.chrome = chrome; p.border = border; p.text = text; p.textDim = textDim;
         p.accent = accent; p.onAccent = onAccent;
-        p.logo = accent;                       // by default the logo uses the accent colour
-        p.sidebar = chrome;                    // by default the explorer uses the chrome colour
+        p.logo = accent;                       
+        p.sidebar = chrome;                    
         p.tabIdle = tabIdle; p.tabHover = tabHover; p.btnHover = btnHover; p.btnDown = btnDown;
         p.gutterBg = gutterBg; p.gutterLine = gutterLine;
         p.keyword = keyword; p.control = control; p.type = type; p.str = str;
@@ -55,10 +52,7 @@ namespace Theme {
         return p;
     }
 
-    // Argument order of Make():
-    //   name, dark,  bg, chrome, border, text, textDim,  accent, onAccent,
-    //   tabIdle, tabHover, btnHover, btnDown,  gutterBg, gutterLine,
-    //   keyword, control, type, string, comment, number, function
+    
     inline const std::vector<Palette>& All() {
         static const std::vector<Palette> all = []() {
             std::vector<Palette> v;
@@ -79,13 +73,7 @@ namespace Theme {
                 C(0, 0, 255), C(175, 0, 219), C(38, 127, 153), C(163, 21, 21),
                 C(0, 128, 0), C(9, 134, 88), C(121, 94, 38)));
 
-            // Sunshine Rainbow: ONE pastel theme
-            //   background  soft cream / pink-white
-            //   chrome      bubblegum pink (header, tab bar)
-            //   accent      light sky blue (status bar, active tab line, hover states)
-            //   logo        sunny yellow
-            //   text        soft dark blue (comfortable to read on cream)
-            //   keywords    pink,  strings  light blue,  comments  soft yellow
+            
             Palette sr = Make("Sunshine Rainbow", false,
                 C(255, 251, 243), C(255, 214, 229), C(245, 186, 208), C(62, 54, 98), C(176, 142, 170),
                 C(125, 200, 244), C(30, 52, 96),
@@ -183,11 +171,9 @@ namespace Theme {
     inline wxColour Function() { return P().function; }
 }
 
-// ----------------------------------------------------------------------------
-//  Windows only helpers: dark title bar / dark scrollbars (ignored when unsupported)
-// ----------------------------------------------------------------------------
+
 #ifdef __WXMSW__
-// dark / light title bar; on Windows 11 the caption also takes the colour of the theme
+
 inline void ApplyTitleBarTheme(HWND hwnd, bool dark, const wxColour& caption, const wxColour& captionText) {
     HMODULE dwm = LoadLibraryW(L"dwmapi.dll");
     if (!dwm) return;
@@ -195,18 +181,18 @@ inline void ApplyTitleBarTheme(HWND hwnd, bool dark, const wxColour& caption, co
     SetAttrFn fn = reinterpret_cast<SetAttrFn>(GetProcAddress(dwm, "DwmSetWindowAttribute"));
     if (fn) {
         BOOL on = dark ? TRUE : FALSE;
-        fn(hwnd, 20, &on, sizeof(on));   // DWMWA_USE_IMMERSIVE_DARK_MODE
-        fn(hwnd, 19, &on, sizeof(on));   // same attribute id on early Win10 builds
+        fn(hwnd, 20, &on, sizeof(on));   
+        fn(hwnd, 19, &on, sizeof(on));   
         COLORREF cap = RGB(caption.Red(), caption.Green(), caption.Blue());
         COLORREF txt = RGB(captionText.Red(), captionText.Green(), captionText.Blue());
-        fn(hwnd, 35, &cap, sizeof(cap)); // DWMWA_CAPTION_COLOR  (Windows 11 only, ignored elsewhere)
-        fn(hwnd, 36, &txt, sizeof(txt)); // DWMWA_TEXT_COLOR
-        fn(hwnd, 34, &cap, sizeof(cap)); // DWMWA_BORDER_COLOR
+        fn(hwnd, 35, &cap, sizeof(cap)); 
+        fn(hwnd, 36, &txt, sizeof(txt)); 
+        fn(hwnd, 34, &cap, sizeof(cap)); 
     }
     FreeLibrary(dwm);
 }
 
-// dark or normal scrollbars for a control
+
 inline void ApplyControlTheme(HWND hwnd, bool dark) {
     HMODULE ux = LoadLibraryW(L"uxtheme.dll");
     if (!ux) return;
