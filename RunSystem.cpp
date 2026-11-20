@@ -1,8 +1,3 @@
-// ============================================================================
-//  RunSystem.cpp  -  External compile & run (real Command Prompt window)
-//
-//  OWNER: Yuvraj
-// ============================================================================
 #include "RunSystem.h"
 #include "FileManager.h"
 
@@ -36,7 +31,7 @@ std::wstring BatText(const std::wstring& s) {
     return o;
 }
 
-// inside "quotes" only the percent sign needs escaping
+
 std::wstring BatPath(const std::wstring& s) {
     std::wstring o;
     for (wchar_t c : s) { if (c == L'%') o += L"%%"; else o += c; }
@@ -65,7 +60,7 @@ bool LaunchBatch(const std::wstring& batPath, const std::wstring& workDir) {
 #endif
 }
 
-} // namespace
+} 
 
 void RunSystem::CleanTempRoot() {
     std::error_code ec;
@@ -82,7 +77,7 @@ bool RunSystem::CompileAndRun(wxWindow* parent, const wxString& docName, const w
 
     FileManager fm;
 
-    // every run gets its own folder, so several console windows can run side by side
+
     long long ms = std::chrono::duration_cast<std::chrono::milliseconds>(
         std::chrono::system_clock::now().time_since_epoch()).count();
     fs::path runDir = TempRoot() / (L"run_" + std::to_wstring(ms) + L"_" + std::to_wstring(runNumber));
@@ -94,7 +89,7 @@ bool RunSystem::CompileAndRun(wxWindow* parent, const wxString& docName, const w
         return false;
     }
 
-    const std::wstring srcName = docName.ToStdWstring();          // errors show the real file name
+    const std::wstring srcName = docName.ToStdWstring();          
     const std::wstring exeName = L"codenest_program.exe";
     const fs::path srcPath = runDir / srcName;
 
@@ -104,7 +99,7 @@ bool RunSystem::CompileAndRun(wxWindow* parent, const wxString& docName, const w
         return false;
     }
 
-    // the program runs in the folder of the file (so fopen("data.txt") works); untitled -> home folder
+
     std::wstring workDir = docPath.empty() ? wxGetHomeDir().ToStdWstring()
         : wxFileName(docPath).GetPath().ToStdWstring();
     if (workDir.empty()) workDir = runDir.wstring();
