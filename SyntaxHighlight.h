@@ -9,8 +9,7 @@
 class wxTextCtrl;
 
 namespace SyntaxHighlight {
-    // Re-colours the whole text of the control using the current theme.
-    // (The caller is responsible for the "styling" guard flag of the document.)
+    
     void Apply(wxTextCtrl* editor);
 }
 
