@@ -1,8 +1,3 @@
-// ============================================================================
-//  FileExplorer.cpp  -  VS Code style file explorer panel (folder tree)
-//
-//  OWNER: Vanshika
-// ============================================================================
 #include "FileExplorer.h"
 #include "Theme.h"
 #include "UIControls.h"
@@ -23,13 +18,12 @@ namespace fs = std::filesystem;
 
 namespace {
 
-// data attached to every tree item
 class PathData : public wxTreeItemData {
 public:
     PathData(const wxString& p, bool dir) : path(p), isDir(dir) {}
     wxString path;
     bool isDir;
-    bool loaded = false;      // children of a folder are read when it is first expanded
+    bool loaded = false;      
 };
 
 wxBitmap IconOrBlank(const wxArtID& id) {
@@ -38,7 +32,7 @@ wxBitmap IconOrBlank(const wxArtID& id) {
     return bmp;
 }
 
-} // namespace
+} 
 
 FileExplorer::FileExplorer(wxWindow* parent)
     : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE) {
@@ -63,7 +57,6 @@ FileExplorer::FileExplorer(wxWindow* parent)
         wxTR_SINGLE | wxBORDER_NONE);
     m_tree->SetFont(wxFont(wxFontInfo(10).FaceName("Segoe UI")));
 
-    // icons: 0 = folder, 1 = file
     wxImageList* images = new wxImageList(16, 16, true, 2);
     images->Add(IconOrBlank(wxART_FOLDER));
     images->Add(IconOrBlank(wxART_NORMAL_FILE));
@@ -72,7 +65,6 @@ FileExplorer::FileExplorer(wxWindow* parent)
     m_border = new wxPanel(this);
     m_border->SetMinSize(wxSize(1, -1));
 
-    // ---------- layout ----------
     wxBoxSizer* head = new wxBoxSizer(wxHORIZONTAL);
     head->AddSpacer(FromDIP(14));
     head->Add(m_title, 1, wxALIGN_CENTER_VERTICAL);
@@ -91,8 +83,7 @@ FileExplorer::FileExplorer(wxWindow* parent)
     SetSizer(outer);
 
     ShowTree(false);
-
-    // ---------- events ----------
+        
     m_tree->Bind(wxEVT_TREE_ITEM_EXPANDING, [this](wxTreeEvent& e) {
         Populate(e.GetItem());
         e.Skip();
@@ -112,7 +103,6 @@ void FileExplorer::ShowTree(bool show) {
     Layout();
 }
 
-// reads the entries of a folder item (once) and adds them as children
 void FileExplorer::Populate(const wxTreeItemId& item) {
     if (!item.IsOk()) return;
     PathData* pd = static_cast<PathData*>(m_tree->GetItemData(item));
@@ -135,7 +125,6 @@ void FileExplorer::Populate(const wxTreeItemId& item) {
         it.increment(ec);
     }
 
-    // folders first, then files, both sorted by name
     std::sort(list.begin(), list.end(), [](const Entry& a, const Entry& b) {
         if (a.dir != b.dir) return a.dir;
         return a.name.CmpNoCase(b.name) < 0;
